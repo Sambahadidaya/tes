@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-background text-white font-sans overflow-x-hidden">
+
+    <div x-data="{ showNotice: true }" x-show="showNotice"
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="relative bg-gray-900 border border-gray-700 p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl">
+            <div
+                class="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Under Development</h2>
+            <p class="text-gray-400 mb-6 text-sm">Website ini dalam tahap pengembangan. Klik tombol di bawah untuk
+                keluar.</p>
+            <button onclick="exitWebsite()"
+                class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-red-600/20">
+                Keluar & Tutup
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-[1200px] mx-auto">
+        <nav class="px-6 py-6 flex justify-between items-center relative">
+            <div class="text-2xl font-bold tracking-wider shrink-0">My<span class="text-blue-300">Fortofolio</span>
+            </div>
+            <div class="flex space-x-4 md:space-x-8 text-[10px] md:text-sm font-medium overflow-x-auto no-scrollbar">
+                <a href="#" class="border-b-2 border-blue-500 pb-1">Home</a>
+                <a href="#" class="text-gray-400">Expertise</a>
+                <a href="#" class="text-gray-400">Experience</a>
+                <a href="#" class="text-gray-400">Skills</a>
+                <a href="#" class="text-gray-400">Project</a>
+            </div>
+        </nav>
+
+        <section class="px-6 py-12 flex flex-row items-center justify-between gap-4 min-h-[70vh]">
+            <div class="w-1/2 flex-1">
+                <h1 class="text-3xl md:text-7xl font-bold leading-tight mb-4">Hi, I'm<br>Samba</h1>
+                <p class="text-gray-400 mb-6 max-w-sm text-xs md:text-lg leading-relaxed">
+                    I am a student who has a hobby of studying technology and wants to become a ;
+                </p>
+
+                <div class="flex items-center gap-2 mb-8">
+                    <div
+                        class="bg-blue-600 rounded-full px-3 py-1 md:px-6 md:py-2 text-[10px] md:text-base whitespace-nowrap">
+                        AI Engineer</div>
+                    <button
+                        class="bg-gray-800 px-3 py-1 md:px-6 md:py-2 rounded-full text-[10px] md:text-base border border-gray-700">Skill</button>
+                </div>
+
+                <div class="flex space-x-4 md:space-x-8">
+                    <div>
+                        <h3 class="text-lg md:text-2xl font-bold">100+</h3>
+                        <p class="text-[8px] md:text-sm text-gray-400">Tools</p>
+                    </div>
+                    <div>
+                        <h3 class="text-lg md:text-2xl font-bold">1k+</h3>
+                        <p class="text-[8px] md:text-sm text-gray-400">Project</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-1/2 flex-1 max-w-[150px] md:max-w-sm">
+                <div
+                    class="relative bg-[#16192b] border border-gray-800 rounded-2xl md:rounded-[40px] p-4 md:p-8 aspect-square flex flex-col items-center justify-end">
+                    <img src="sam.png" alt="Samba"
+                        class="absolute bottom-8 md:bottom-16 w-[120%] max-w-none h-auto object-cover grayscale brightness-75">
+                    <div class="text-center relative z-10">
+                        <p class="text-[8px] md:text-[10px] text-gray-500 uppercase tracking-widest">Age</p>
+                        <p class="text-lg md:text-3xl font-bold">19</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="w-full bg-[#11131f] py-6 my-10 border-y border-gray-800 overflow-hidden">
+        <div class="marquee-wrapper">
+            <div class="marquee-content-right">
+                <div class="marquee-group">
+                    <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
+                    <h3 class="text-xl font-bold text-white">Python</h3>
+                    <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
+                    <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
+                </div>
+                <div class="marquee-group">
+                    <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
+                    <h3 class="text-xl font-bold text-white">Python</h3>
+                    <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
+                    <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
