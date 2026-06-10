@@ -1,111 +1,1156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="overflow-x-hidden">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My - Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0a0b14',
+                        card: '#16192b',
+                        primary: '#6b46c1',
+                        secondary: '#3b82f6'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            position: relative;
+        }
+
+        .marquee-content-right {
+            display: flex;
+            width: max-content;
+            animation: slideRightContinuous 30s linear infinite;
+        }
+
+        .marquee-group {
+            display: flex;
+            align-items: center;
+            gap: 5rem;
+            padding-right: 5rem;
+        }
+
+        @keyframes slideRightContinuous {
+            0% {
+                transform: translateX(calc(-100% / 3));
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        .marquee-wrapper::before,
+        .marquee-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 20%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .marquee-wrapper::before {
+            left: 0;
+            background: linear-gradient(to right, #0a0b14 10%, transparent);
+        }
+
+        .marquee-wrapper::after {
+            right: 0;
+            background: linear-gradient(to left, #0a0b14 10%, transparent);
+        }
+
+        .marquee-content-left {
+            display: flex;
+            animation: slideLeft 15s linear infinite;
+            min-width: 200%;
+        }
+
+        @keyframes slideLeft {
+            0% {
+                transform: translateX(0%);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes loop-vertical {
+
+            0%,
+            15% {
+                transform: translateY(0);
+            }
+
+            25%,
+            35% {
+                transform: translateY(-3rem);
+            }
+
+            45%,
+            55% {
+                transform: translateY(-6rem);
+            }
+
+            65%,
+            75% {
+                transform: translateY(-9rem);
+            }
+
+            85%,
+            95% {
+                transform: translateY(-12rem);
+            }
+
+            100% {
+                transform: translateY(-15rem);
+            }
+        }
+
+        .animate-loop-vertical {
+            animation: loop-vertical 10s cubic-bezier(0.645, 0.045, 0.355, 1) infinite;
+        }
+
+        .animate-loop-vertical:hover,
+        .marquee-content-right:hover,
+        .marquee-content-left:hover {
+            animation-play-state: paused;
+        }
+
+        .pop-card {
+            flex-shrink: 0;
+            width: 12rem;
+            height: 18rem;
+            border-radius: 1rem;
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            transition: all 0.7s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            margin-left: -1rem;
+            margin-right: -1rem;
+        }
+
+        @media (min-width: 768px) {
+            .pop-card {
+                width: 16rem;
+                height: 350px;
+                margin-left: 0.5rem;
+                margin-right: 0.5rem;
+            }
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+            text-align: left;
+        }
+
+        .card-active {
+            transform: scale(1.1);
+            z-index: 20;
+            opacity: 1;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .card-inactive {
+            transform: scale(0.9);
+            opacity: 0.4;
+            z-index: 0;
+            filter: blur(1px);
+        }
+
+        :root {
+            --card-bg: #0f111a;
+            --primary: #fbbf24;
+        }
+
+        .radar-card {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 1.5rem;
+            border: 1px solid #1f2937;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .radar-header {
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .radar-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        #radar-value {
+            transition: all 1s ease-out;
+        }
+
+        .label-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .label-pos {
+            position: absolute;
+            white-space: nowrap;
+        }
+
+        .tooltip {
+            position: absolute;
+            pointer-events: none;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(251, 191, 36, 0.5);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip.hidden {
+            display: none;
+        }
+
+        .tooltip h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        .tooltip-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .color-box {
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .tooltip-detail p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #e5e7eb;
+        }
+
+        .dot-trigger {
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .dot-trigger:hover {
+            r: 6;
+            fill: white;
+        }
+
+        .timeline-line {
+            background: linear-gradient(to bottom, #3b82f6 0%, #6b46c1 50%, transparent 100%);
+            background-size: 100% 200%;
+            animation: flowDown 5s ease-in-out infinite;
+        }
+
+        @keyframes flowDown {
+            0% {
+                background-position: 0% -100%;
+            }
+
+            100% {
+                background-position: 0% 100%;
+            }
+        }
+
+        #scroll-progress {
+            position: fixed;
+            top: 80px;
+            left: 0;
+            height: 4px;
+            width: 0;
+            z-index: 50;
+            /* lebih kecil dari nav */
+            background: linear-gradient(90deg,
+                    #3b82f6,
+                    #8b5cf6,
+                    #06b6d4,
+                    #3b82f6);
+            background-size: 300% 100%;
+            animation: gradientMove 4s linear infinite;
+            box-shadow: 0 0 15px rgba(59, 130, 246, .8);
+        }
+
+        @keyframes gradientMove {
+            from {
+                background-position: 0% 50%;
+            }
+
+            to {
+                background-position: 300% 50%;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-background text-white font-sans overflow-x-hidden">
+<body class="bg-background text-white font-sans overflow-x-hidden w-full max-w-[100vw]">
 
-    <div x-data="{ showNotice: true }" x-show="showNotice"
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-        <div class="relative bg-gray-900 border border-gray-700 p-8 rounded-3xl max-w-sm w-full text-center shadow-2xl">
-            <div
-                class="mb-4 inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/20 text-blue-400">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <h2 class="text-2xl font-bold mb-2">Under Development</h2>
-            <p class="text-gray-400 mb-6 text-sm">Website ini dalam tahap pengembangan. Klik tombol di bawah untuk
-                keluar.</p>
-            <button onclick="exitWebsite()"
-                class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-red-600/20">
-                Keluar & Tutup
-            </button>
-        </div>
-    </div>
+    <div x-data="{ 
+        open: false, 
+        active: 'home',
+        init() {
+            const sections = document.querySelectorAll('section[id], div[id=\'home\']');
+            window.addEventListener('scroll', () => {
+                let current = this.active;
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (window.scrollY >= sectionTop - 150) {
+                        current = section.getAttribute('id').toLowerCase();
+                    }
+                });
+                this.active = current;
+            });
+        }
+    }">
 
-    <div class="max-w-[1200px] mx-auto">
-        <nav class="px-6 py-6 flex justify-between items-center relative">
-            <div class="text-2xl font-bold tracking-wider shrink-0">My<span class="text-blue-300">Fortofolio</span>
-            </div>
-            <div class="flex space-x-4 md:space-x-8 text-[10px] md:text-sm font-medium overflow-x-auto no-scrollbar">
-                <a href="#" class="border-b-2 border-blue-500 pb-1">Home</a>
-                <a href="#" class="text-gray-400">Expertise</a>
-                <a href="#" class="text-gray-400">Experience</a>
-                <a href="#" class="text-gray-400">Skills</a>
-                <a href="#" class="text-gray-400">Project</a>
+        <!-- DESKTOP MENU NAV -->
+        <nav
+            class="fixed top-0 left-0 w-full px-6 py-6 flex justify-between items-center z-50 bg-background/80 backdrop-blur-md border-b border-gray-800">
+            <div class="container mx-auto flex justify-between items-center relative w-full">
+                <div class="text-2xl font-bold tracking-wider">My<span class="text-blue-300">Fortofolio</span></div>
+
+                <button @click.stop="open = !open" class="md:hidden text-white focus:outline-none z-[60]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <template x-for="item in ['Home', 'About', 'Experience', 'Skills', 'Project', 'Story', 'Contact']">
+                        <a :href="item === 'Home' ? '#' : '#' + item.toLowerCase()" @click="active = item.toLowerCase()"
+                            :class="
+                active === item.toLowerCase()
+                ? 'text-white border-blue-500'
+                : 'text-gray-400 border-transparent hover:text-white hover:border-gray-400'
+            " class="border-b-2 pb-1 transition-all duration-300" x-text="item">
+                        </a>
+                    </template>
+                </div>
+                <div class="hidden md:flex items-center space-x-8 text-sm font-medium">
+
+                    <a href="#"
+                        class="ml-8 px-4 py-2 bg-[#3b83f64f] hover:bg-blue-700 text-white font-medium rounded-xl transition-colors duration-300">
+                        Download CV
+                    </a>
+                </div>
+
             </div>
         </nav>
 
-        <section class="px-6 py-12 flex flex-row items-center justify-between gap-4 min-h-[70vh]">
-            <div class="w-1/2 flex-1">
-                <h1 class="text-3xl md:text-7xl font-bold leading-tight mb-4">Hi, I'm<br>Samba</h1>
-                <p class="text-gray-400 mb-6 max-w-sm text-xs md:text-lg leading-relaxed">
-                    I am a student who has a hobby of studying technology and wants to become a ;
-                </p>
+        <!-- MOVILE MENU NAV -->
+        <div x-show="open" @click="open = false" x-transition.opacity
+            class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[55] md:hidden" style="display: none;"></div>
 
-                <div class="flex items-center gap-2 mb-8">
-                    <div
-                        class="bg-blue-600 rounded-full px-3 py-1 md:px-6 md:py-2 text-[10px] md:text-base whitespace-nowrap">
-                        AI Engineer</div>
-                    <button
-                        class="bg-gray-800 px-3 py-1 md:px-6 md:py-2 rounded-full text-[10px] md:text-base border border-gray-700">Skill</button>
+        <div @click.outside="open = false" :class="open ? 'translate-x-0' : 'translate-x-full'"
+            class="fixed top-0 right-0 h-screen w-[75vw] sm:w-64 bg-gray-800/10 backdrop-blur-xl z-[60] transition-transform duration-300 ease-in-out md:hidden flex flex-col items-center justify-center text-sm font-medium shadow-2xl">
+            <button @click="open = false" class="absolute top-6 right-6 md:hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="flex flex-col gap-6 px-8 justify-center items-center text-center md:hidden">
+                <h1 class="text-2xl font-bold tracking-wider mb-8 -mt-36">My<span
+                        class="text-blue-300">Fortofolio</span></h1>
+                <template x-for="item in ['Home', 'About', 'Experience', 'Skills', 'Project', 'Story', 'Contact']">
+                    <a :href="item === 'Home' ? '#' : '#' + item.toLowerCase()" @click="
+        active = item.toLowerCase();
+        open = false;
+    " :class="
+        active === item.toLowerCase()
+        ? 'text-white border-l-4 border-blue-500 pl-4'
+        : 'text-gray-400 border-l-4 border-transparent pl-4 hover:text-white'
+    " class="transition-all duration-300" x-text="item">
+                    </a>
+                </template>
+                <a href="tes.pdf"
+                    class="ml-8 mt-8 hover:text-red-400 transition-colors duration-300 mt-4 text-sm font-medium">
+                    Download CV
+                </a>
+                <div
+                    class="-mb-36 border-t border-gray-600 pt-4 flex flex-row justify-between items-center gap-4 text-xs text-gray-400">
+                    <p>&copy; 2026 Samba Hadidaya. All rights reserved.</p>
                 </div>
+            </div>
+        </div>
 
-                <div class="flex space-x-4 md:space-x-8">
-                    <div>
-                        <h3 class="text-lg md:text-2xl font-bold">100+</h3>
-                        <p class="text-[8px] md:text-sm text-gray-400">Tools</p>
+        <!-- Scroll Progress Bar -->
+        <div id="scroll-progress"></div>
+
+        <section
+            class="container mx-auto px-6 pt-28 pb-12 flex flex-col md:flex-row-reverse items-center gap-12 justify-center md:justify-between"
+            id="home">
+            <!-- home Profil -->
+            <div class="relative w-48 h-48 md:w-64 md:h-64 xl:w-80 xl:h-80 group md:mr-12">
+                <div
+                    class="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full blur-[50px] opacity-20 group-hover:opacity-40 transition-opacity duration-500">
+                </div>
+                <div
+                    class="relative w-full h-full rounded-full overflow-hidden border-2 border-white/10 backdrop-blur-sm p-2 bg-white/5 shadow-2xl">
+                    <img src="sam.png" alt="Profile"
+                        class="w-full h-full object-cover rounded-full transform group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent">
                     </div>
-                    <div>
-                        <h3 class="text-lg md:text-2xl font-bold">1k+</h3>
-                        <p class="text-[8px] md:text-sm text-gray-400">Project</p>
-                    </div>
+                </div>
+                <div
+                    class="absolute -bottom-4 -right-4 bg-card/80 backdrop-blur-md border border-gray-700 p-4 rounded-2xl shadow-xl animate-bounce">
+                    <i class="fas fa-code text-blue-400 text-2xl"></i>
                 </div>
             </div>
 
-            <div class="w-1/2 flex-1 max-w-[150px] md:max-w-sm">
+            <!-- home keterangan profil -->
+            <div class="w-full md:w-1/2 md:pr-12 text-center md:text-left md:mt-3 md:ml-6">
+                <h1 class="text-3xl md:text-6xl font-bold leading-tight mb-6">Hi, I'm Samba</h1>
+                <p class="text-gray-400 mb-8 max-w-md mx-auto md:mx-0 leading-relaxed ">
+                    I'm a student who has a hobby of studying technology and wants to become a ;
+                </p>
+
                 <div
-                    class="relative bg-[#16192b] border border-gray-800 rounded-2xl md:rounded-[40px] p-4 md:p-8 aspect-square flex flex-col items-center justify-end">
-                    <img src="sam.png" alt="Samba"
-                        class="absolute bottom-8 md:bottom-16 w-[120%] max-w-none h-auto object-cover grayscale brightness-75">
-                    <div class="text-center relative z-10">
-                        <p class="text-[8px] md:text-[10px] text-gray-500 uppercase tracking-widest">Age</p>
-                        <p class="text-lg md:text-3xl font-bold">19</p>
+                    class="flex flex-col sm:flex-row md:flex-col xl:flex-row items-center gap-4 mb-12 mx-auto justify-center md:justify-start">
+                    <div
+                        class="bg-gradient-to-r from-blue-500 to-blue-700 h-12 overflow-hidden rounded-full px-6 flex flex-col justify-start w-full sm:w-fit md:w-full xl:w-fit min-w-[200px]">
+                        <div
+                            class="animate-loop-vertical flex flex-col text-center leading-[3rem] font-medium whitespace-nowrap px-4 text-white">
+                            <span class="h-12">FullStack Developer</span>
+                            <span class="h-12">IT Support Specialist</span>
+                            <span class="h-12">Data Engineer</span>
+                            <span class="h-12">Desainer</span>
+                            <span class="h-12">Multimedia</span>
+                            <span class="h-12">FullStack Developer</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-4 sm:mt-0">
+                        <a href="#"
+                            class="group relative w-12 h-12 flex items-center justify-center border border-gray-700 rounded-full text-white overflow-hidden transition-all duration-300">
+                            <span
+                                class="absolute bottom-0 left-0 w-full h-0 bg-gray-700 transition-all duration-300 ease-out group-hover:h-full"></span>
+                            <i
+                                class="fab fa-github text-xl relative z-10 transition-colors duration-300 group-hover:text-white"></i>
+                        </a>
+                        <a href="#"
+                            class="group relative w-12 h-12 flex items-center justify-center border border-gray-700 rounded-full text-white overflow-hidden transition-all duration-300">
+                            <span
+                                class="absolute bottom-0 left-0 w-full h-0 bg-gray-700 transition-all duration-300 ease-out group-hover:h-full"></span>
+                            <i
+                                class="fab fa-instagram text-xl relative z-10 transition-colors duration-300 group-hover:text-white"></i>
+                        </a>
+                        <a href="#"
+                            class="group relative w-12 h-12 flex items-center justify-center border border-gray-700 rounded-full text-white overflow-hidden transition-all duration-300">
+                            <span
+                                class="absolute bottom-0 left-0 w-full h-0 bg-gray-700 transition-all duration-300 ease-out group-hover:h-full"></span>
+                            <i
+                                class="fab fa-whatsapp text-xl relative z-10 transition-colors duration-300 group-hover:text-white"></i>
+                        </a>
+                        <a href="#"
+                            class="md:hidden group relative w-12 h-12 flex items-center justify-center border border-gray-700 rounded-full text-white overflow-hidden transition-all duration-300">
+                            <span
+                                class="absolute bottom-0 left-0 w-full h-0 bg-gray-700 transition-all duration-300 ease-out group-hover:h-full"></span>
+                            <i
+                                class="fab fa-tiktok text-xl relative z-10 transition-colors duration-300 group-hover:text-white"></i>
+                        </a>
+                        <a href="#"
+                            class="group relative w-12 h-12 flex items-center justify-center border border-gray-700 rounded-full text-white overflow-hidden transition-all duration-300">
+                            <span
+                                class="absolute bottom-0 left-0 w-full h-0 bg-gray-700 transition-all duration-300 ease-out group-hover:h-full"></span>
+                            <i
+                                class="fab fa-linkedin-in text-xl relative z-10 transition-colors duration-300 group-hover:text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 md:flex md:space-x-8 text-center md:text-center gap-4">
+                    <div>
+                        <h3 class="text-2xl font-bold">100 +</h3>
+                        <p class="text-gray-400 text-sm">Tools</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold">100 +</h3>
+                        <p class="text-gray-400 text-sm">Framework</p>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold">1k +</h3>
+                        <p class="text-gray-400 text-sm">Project</p>
+                    </div>
+                </div>
+                <div class="mt-4 opacity-20 italic">
+                    <h3>(Still a dream)</h3>
+                </div>
+            </div>
+        </section>
+
+        <div class="w-full bg-[#11131f] py-6 my-10 border-y border-gray-800">
+            <div class="marquee-wrapper">
+                <div class="marquee-content-right">
+                    <div class="marquee-group">
+                        <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
+                        <h3 class="text-xl font-bold text-white">Python</h3>
+                        <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
+                        <h3 class="text-xl font-bold text-gray-300">n8n</h3>
+                        <h3 class="text-xl font-bold text-gray-400 tracking-widest">Capcut</h3>
+                        <h3 class="text-xl font-bold text-green-400">CorelDraw</h3>
+                        <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
+                    </div>
+                    <div class="marquee-group">
+                        <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
+                        <h3 class="text-xl font-bold text-white">Python</h3>
+                        <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
+                        <h3 class="text-xl font-bold text-gray-300">n8n</h3>
+                        <h3 class="text-xl font-bold text-gray-400 tracking-widest">Capcut</h3>
+                        <h3 class="text-xl font-bold text-green-400">CorelDraw</h3>
+                        <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section id="about" class="container mx-auto px-6 py-16">
+            <div
+                class="flex flex-col md:flex-row items-center gap-12 max-w-6xl mx-auto bg-card border border-gray-800 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-64 h-64 bg-blue-500/10 blur-[80px]"></div>
+                <div class="w-full md:w-1/2 relative z-10">
+                    <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-2">Discover</h3>
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">About Me</h2>
+                    <p class="text-gray-400 leading-relaxed mb-6">
+                        Sebagai seorang mahasiswa Manajemen Informatika di Politeknik LP3I Bandung yang berawal dari
+                        Garut,
+                        saya memiliki ambisi besar untuk terus belajar dan berkembang setiap harinya. Saya memadukan
+                        kreativitas dan teknologi untuk menciptakan solusi digital yang bermakna.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-8">
+                        Saat ini saya bersiap memasuki jenjang semester 3, dan saya terus mengasah diri dengan visi
+                        menjadi
+                        seorang profesional serba bisa. Saya tidak hanya mendalami penulisan kode untuk project SaaS,
+                        tetapi
+                        juga mengasah kepekaan terhadap desain, multimedia, dan pengelolaan data. Saya percaya bahwa
+                        konsistensi adalah kunci untuk melampaui batasan diri.
+                    </p>
+                    <p class="text-gray-400 leading-relaxed mb-8 text-center italic">
+                        Quote favorit saya adalah <br> "Surpass your limits. Right here. Right now." <br> — Yami
+                        Sukehiro
+                    </p>
+                    <a href="#contact"
+                        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-colors inline-flex items-center gap-2">
+                        Contact Me <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div class="w-full md:w-1/2 flex justify-center relative z-10">
+                    <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+                        <div
+                            class="bg-background border border-gray-700 p-6 rounded-2xl text-center hover:border-blue-500/50 transition-colors">
+                            <h4 class="text-3xl font-bold text-white mb-1">D3</h4>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Informatics</p>
+                        </div>
+                        <div
+                            class="bg-background border border-gray-700 p-6 rounded-2xl text-center hover:border-purple-500/50 transition-colors">
+                            <h4 class="text-3xl font-bold text-white mb-1">∞</h4>
+                            <p class="text-xs text-gray-400 uppercase tracking-wider">Ambition</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-    </div>
 
-    <div class="w-full bg-[#11131f] py-6 my-10 border-y border-gray-800 overflow-hidden">
-        <div class="marquee-wrapper">
-            <div class="marquee-content-right">
-                <div class="marquee-group">
-                    <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
-                    <h3 class="text-xl font-bold text-white">Python</h3>
-                    <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
-                    <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
-                </div>
-                <div class="marquee-group">
-                    <h3 class="text-xl font-bold text-gray-400 italic">Javascript</h3>
-                    <h3 class="text-xl font-bold text-white">Python</h3>
-                    <h3 class="text-xl font-bold text-yellow-500">Supabase</h3>
-                    <h3 class="text-xl font-bold text-blue-400">Lightroom</h3>
+        <section id="Experience" class="container mx-auto px-6 py-12 text-center overflow-hidden min-h-100vh">
+            <h2 class="text-3xl font-bold mb-12">My Experience</h2>
+            <div class="relative w-full h-[450px] flex justify-center items-center overflow-hidden">
+                <div id="popular-track"
+                    class="flex items-center justify-center transition-transform duration-700 ease-in-out">
+                    <div class="pop-card">
+                        <img src="sam.png" class="card-img" alt="png-1"
+                            onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop'">
+                        <div class="card-overlay">
+                            <h4 class="font-bold">Fotography</h4>
+                            <p class="text-xs text-blue-300">1 year </p>
+                        </div>
+                        <div
+                            class="absolute z-0 bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-secondary/80 to-transparent -mb-4">
+                        </div>
+                        <div
+                            class="absolute z-0 left-0 w-full h-1/3 bg-gradient-to-t from-transparent to-secondary/30 -mb-4">
+                        </div>
+                    </div>
+                    <div class="pop-card">
+                        <img src="foto2.png" class="card-img" alt="png-2"
+                            onerror="this.src='https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop'">
+                        <div class="card-overlay">
+                            <h4 class="font-bold">------</h4>
+                            <p class="text-xs text-blue-300">6 years</p>
+                        </div>
+                        <div
+                            class="absolute z-0 bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-secondary/80 to-transparent -mb-4">
+                        </div>
+                        <div
+                            class="absolute z-0 left-0 w-full h-1/3 bg-gradient-to-t from-transparent to-secondary/30 -mb-4">
+                        </div>
+                    </div>
+                    <div class="pop-card">
+                        <img src="foto3.png"
+                            onerror="this.src='https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?w=400&h=500&fit=crop'"
+                            class="card-img" alt="png-3">
+                        <div class="card-overlay">
+                            <h4 class="font-bold">Multimedia</h4>
+                            <p class="text-xs text-blue-300">3 years</p>
+                        </div>
+                        <div
+                            class="absolute z-0 bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-secondary/80 to-transparent -mb-4">
+                        </div>
+                        <div
+                            class="absolute z-0 left-0 w-full h-1/3 bg-gradient-to-t from-transparent to-secondary/30 -mb-4">
+                        </div>
+                    </div>
+                    <div class="pop-card">
+                        <img src="foto4.png"
+                            onerror="this.src='https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=400&h=500&fit=crop'"
+                            class="card-img" alt="png-4">
+                        <div class="card-overlay">
+                            <h4 class="font-bold">Teknik Informatika</h4>
+                            <p class="text-xs text-blue-300">3 years</p>
+                        </div>
+                        <div
+                            class="absolute z-0 bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-secondary/80 to-transparent -mb-4">
+                        </div>
+                        <div
+                            class="absolute z-0 left-0 w-full h-1/3 bg-gradient-to-t from-transparent to-secondary/30 -mb-4">
+                        </div>
+                    </div>
+                    <div class="pop-card">
+                        <img src="foto5.png"
+                            onerror="this.src='https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=400&h=500&fit=crop'"
+                            class="card-img" alt="png-5">
+                        <div class="card-overlay">
+                            <h4 class="font-bold">Videography</h4>
+                            <p class="text-xs text-blue-300">6 months</p>
+                        </div>
+                        <div
+                            class="absolute z-0 bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-secondary/80 to-transparent -mb-4">
+                        </div>
+                        <div
+                            class="absolute z-0 left-0 w-full h-1/3 bg-gradient-to-t from-transparent to-secondary/30 -mb-4">
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
+
+        <section id="skills" class="container mx-auto px-6 py-16">
+            <h2 class="text-3xl font-bold mb-12 text-center">My Skill</h2>
+
+            <div class="flex flex-col gap-10 max-w-6xl mx-auto">
+
+                <div class="w-full flex justify-center relative z-40">
+                    <div id="skill-dropdown"
+                        class="relative w-64 bg-card border border-gray-700 rounded-2xl shadow-[0_0_20px_rgba(59,130,246,0.15)] transition-all duration-500 overflow-hidden"
+                        style="height: 3rem;">
+
+                        <div id="dropdown-loop"
+                            class="animate-loop-vertical flex flex-col text-center font-bold text-white cursor-pointer hover:[animation-play-state:paused]"
+                            onclick="toggleDropdown(true)">
+                            <div class="h-12 flex items-center justify-center gap-2 text-blue-400">Pilih Kategori <i
+                                    class="fas fa-chevron-down text-sm"></i></div>
+                            <div class="h-12 flex items-center justify-center">FullStack Dev</div>
+                            <div class="h-12 flex items-center justify-center">IT Support</div>
+                            <div class="h-12 flex items-center justify-center">Data Engineer</div>
+                            <div class="h-12 flex items-center justify-center">Multimedia</div>
+                            <div class="h-12 flex items-center justify-center gap-2 text-blue-400">Pilih Kategori <i
+                                    class="fas fa-chevron-down text-sm"></i></div>
+                        </div>
+
+                        <div id="dropdown-list"
+                            class="opacity-0 transition-opacity duration-300 absolute top-0 left-0 w-full bg-card flex flex-col pointer-events-none">
+                            <div class="h-12 flex items-center justify-center gap-2 text-blue-400 cursor-pointer border-b border-gray-700 font-bold bg-gray-800"
+                                onclick="toggleDropdown(false)">
+                                Tutup Menu <i class="fas fa-chevron-up text-sm"></i>
+                            </div>
+                            <button onclick="selectSkill('SEMUA')"
+                                class="h-12 hover:bg-gray-800 text-white font-medium border-b border-gray-800 transition-colors">SEMUA</button>
+                            <button onclick="selectSkill('FULLSTACK')"
+                                class="h-12 hover:bg-gray-800 text-gray-300 border-b border-gray-800 transition-colors">FullStack
+                                Web Developer</button>
+                            <button onclick="selectSkill('ITSUPPORT')"
+                                class="h-12 hover:bg-gray-800 text-gray-300 border-b border-gray-800 transition-colors">IT
+                                Support Specialist</button>
+                            <button onclick="selectSkill('DATAENGINEER')"
+                                class="h-12 hover:bg-gray-800 text-gray-300 border-b border-gray-800 transition-colors">Data
+                                Engineer</button>
+                            <button onclick="selectSkill('DESAINER')"
+                                class="h-12 hover:bg-gray-800 text-gray-300 border-b border-gray-800 transition-colors">Desainer</button>
+                            <button onclick="selectSkill('MULTIMEDIA')"
+                                class="h-12 hover:bg-gray-800 text-gray-300 transition-colors">Multimedia</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-10 w-full relative z-30">
+                    <div class="w-full md:w-1/2 flex justify-center items-center">
+                        <div class="radar-card w-full max-w-[350px]">
+                            <h3 id="radar-title" class="radar-header text-xl">SEMUA Stats</h3>
+                            <div class="radar-container">
+                                <svg width="300" height="300" viewBox="0 0 300 300" class="radar-svg">
+                                    <polygon id="radar-bg" points="" fill="rgba(31, 41, 55, 0.3)" stroke="#374151"
+                                        stroke-width="1" />
+                                    <polygon id="level-80" points="" fill="none" stroke="rgba(255,255,255,0.05)"
+                                        stroke-width="1" />
+                                    <polygon id="level-60" points="" fill="none" stroke="rgba(255,255,255,0.05)"
+                                        stroke-width="1" />
+                                    <polygon id="level-40" points="" fill="none" stroke="rgba(255,255,255,0.05)"
+                                        stroke-width="1" />
+                                    <polygon id="radar-value" points="" fill="rgba(251, 191, 36, 0.2)" stroke="#fbbf24"
+                                        stroke-width="3" />
+                                    <g id="radar-dots"></g>
+                                </svg>
+                                <div id="radar-labels" class="label-layer"></div>
+                            </div>
+                            <div id="radar-tooltip" class="tooltip hidden">
+                                <h4 id="tooltip-title">SPEED</h4>
+                                <div class="tooltip-detail">
+                                    <div class="color-box"></div>
+                                    <p>Proficiency: <span id="tooltip-value">85</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full md:w-1/2 flex flex-col justify-center">
+                        <div
+                            class="bg-card border border-gray-700 rounded-2xl p-8 shadow-xl relative overflow-hidden group hover:border-purple-500/50 transition-colors duration-500 min-h-[300px] flex flex-col">
+                            <div
+                                class="absolute top-0 right-0 w-32 h-32 bg-purple-600/10 rounded-bl-full blur-2xl -z-10 group-hover:bg-purple-500/20 transition-all duration-500">
+                            </div>
+                            <h3 class="text-sm font-bold text-purple-400 uppercase tracking-widest mb-6">Tech Stack &
+                                Tools:
+                            </h3>
+
+                            <div id="tech-stack-container" class="flex flex-wrap gap-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full flex flex-col justify-center relative z-20">
+                    <div
+                        class="bg-card border border-gray-700 rounded-2xl p-8 md:p-10 shadow-xl relative overflow-hidden group hover:border-blue-500/50 transition-colors duration-500 flex flex-col justify-center text-center md:text-left">
+                        <div
+                            class="absolute top-0 right-0 w-48 h-48 bg-blue-600/10 rounded-bl-full blur-3xl -z-10 group-hover:bg-blue-500/20 transition-all duration-500">
+                        </div>
+                        <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-2">Profil Kompetensi:
+                        </h3>
+                        <h2 id="kesimpulan-title" class="text-2xl md:text-3xl font-bold text-white mb-6">SEMUA</h2>
+                        <p id="kesimpulan-text" class="text-gray-400 leading-relaxed text-base md:text-lg max-w-4xl">
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="project" class="container mx-auto px-6 py-16" x-data="projectManager()">
+            <div class="text-center mb-10">
+                <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-2">Showcase</h3>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-8">Featured Projects</h2>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <template x-for="cat in categories">
+                        <button @click="activeCategory = cat"
+                            :class="activeCategory === cat ? 'bg-blue-600 text-white border-blue-500' : 'bg-card text-gray-400 border-gray-700 hover:border-blue-500/50'"
+                            class="px-5 py-2 border rounded-full text-sm font-medium transition-all duration-300"
+                            x-text="cat"></button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="relative max-w-6xl mx-auto">
+                <div class="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- <template x-for="proj in filteredProjects()" :key="proj.id">
+                        <div @click="openModal(proj)"
+                            class="cursor-pointer group relative bg-card border border-gray-800 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all duration-500 hover:-translate-y-2 shadow-lg">
+                            <div class="relative h-56 overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent z-10"></div>
+                                <img :src="proj.img" :alt="proj.title"
+                                    class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700">
+                            </div>
+                            <div class="p-6 relative z-20 -mt-10">
+                                <div
+                                    class="w-12 h-12 bg-gray-800 border border-gray-700 rounded-xl flex items-center justify-center mb-4 shadow-lg group-hover:bg-blue-600 transition-colors">
+                                    <i :class="proj.icon + ' text-white'"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors"
+                                    x-text="proj.title"></h3>
+                                <p class="text-gray-400 text-sm mb-6 line-clamp-3" x-text="proj.desc"></p>
+                                <div class="flex flex-wrap gap-2 text-xs font-medium">
+                                    <span
+                                        class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full"
+                                        x-text="proj.category"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </template> -->
+                </div>
+
+                <div class="md:hidden relative overflow-hidden pb-8" x-data="{ currentSlide: 0 }"
+                    x-init="$watch('activeCategory', () => currentSlide = 0)">
+
+                    <div class="flex transition-transform duration-500 ease-out gap-4"
+                        :style="`transform: translateX(calc(-${currentSlide * 100}% - ${currentSlide}rem))`">
+                        <!-- <template x-for="(proj, index) in filteredProjects()" :key="proj.id">
+                            <div class="w-full shrink-0">
+                                <div @click="openModal(proj)"
+                                    class="cursor-pointer group relative bg-card border border-gray-800 rounded-2xl overflow-hidden shadow-lg">
+                                    <div class="relative h-56 overflow-hidden">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent z-10">
+                                        </div>
+                                        <img :src="proj.img" :alt="proj.title" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="p-6 relative z-20 -mt-10">
+                                        <div
+                                            class="w-12 h-12 border border-gray-700 rounded-xl flex items-center justify-center mb-4 shadow-lg bg-blue-600">
+                                            <i :class="proj.icon + ' text-white'"></i>
+                                        </div>
+                                        <h3 class="text-xl font-bold text-white mb-2" x-text="proj.title"></h3>
+                                        <p class="text-gray-400 text-sm mb-6 line-clamp-3" x-text="proj.desc"></p>
+                                        <div class="flex flex-wrap gap-2 text-xs font-medium">
+                                            <span
+                                                class="px-3 py-1 bg-blue-500/10 text-blue-400 border border-blue-500/20 rounded-full"
+                                                x-text="proj.category"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </template> -->
+                    </div>
+
+                    <button @click="currentSlide = Math.max(0, currentSlide - 1)" x-show="currentSlide > 0"
+                        class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 p-3 rounded-full text-white z-30 transition-colors"><i
+                            class="fas fa-chevron-left"></i></button>
+                    <button @click="currentSlide = Math.min(filteredProjects().length - 1, currentSlide + 1)"
+                        x-show="currentSlide < filteredProjects().length - 1"
+                        class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 p-3 rounded-full text-white z-30 transition-colors"><i
+                            class="fas fa-chevron-right"></i></button>
+
+                    <div class="absolute bottom-0 left-0 w-full flex justify-center gap-2 mt-4">
+                        <template x-for="(proj, index) in filteredProjects()" :key="proj.id">
+                            <button @click="currentSlide = index"
+                                :class="currentSlide === index ? 'bg-blue-500 w-6' : 'bg-gray-600 w-2'"
+                                class="h-2 rounded-full transition-all duration-300"></button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div x-show="isModalOpen" style="display: none;"
+                class="fixed inset-0 z-[100] flex items-center justify-center">
+                <div @click="closeModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity">
+                </div>
+
+                <div :class="isFullScreen ? 'w-full h-full rounded-none border-none' : 'w-11/12 max-w-4xl max-h-[90vh] rounded-2xl border border-gray-700'"
+                    class="relative bg-card overflow-hidden z-10 flex flex-col transition-all duration-300 shadow-2xl">
+                    <!-- 
+                    <template x-if="selectedProject">
+                        <div class="flex flex-col h-full">
+                            <div :class="isFullScreen ? 'h-[70vh]' : 'h-64 sm:h-80'"
+                                class="relative w-full shrink-0 transition-all duration-300">
+                                <img :src="selectedProject.img" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-gradient-to-t from-card to-transparent"></div>
+                            </div>
+
+                            <div class="p-6 md:p-8 flex-grow overflow-y-auto">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="text-blue-400 text-sm font-bold uppercase"
+                                        x-text="selectedProject.category"></span>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-white mb-4"
+                                    x-text="selectedProject.title">
+                                </h2>
+                                <p class="text-gray-300 leading-relaxed" x-text="selectedProject.desc"></p>
+                            </div>
+
+                            <div class="p-6 border-t border-gray-800 flex flex-wrap justify-end gap-4 shrink-0 bg-card">
+                                <button @click="closeModal()"
+                                    class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">Tutup</button>
+
+                                <template x-if="selectedProject.category === 'FULLSTACK'">
+                                    <a :href="selectedProject.demoLink" target="_blank"
+                                        class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                                        Live Demo <i class="fas fa-external-link-alt"></i>
+                                    </a>
+                                </template>
+
+                                <template x-if="selectedProject.category !== 'FULLSTACK'">
+                                    <div class="flex gap-4">
+                                        <a :href="selectedProject.demoLink" target="_blank"
+                                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+                                            Buka File <i class="fas fa-folder-open"></i>
+                                        </a>
+                                        <button @click="isFullScreen = !isFullScreen"
+                                            class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center gap-2">
+                                            <span x-text="isFullScreen ? 'Perkecil Layar' : 'Lihat Saja'"></span>
+                                            <i :class="isFullScreen ? 'fas fa-compress' : 'fas fa-expand'"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template> -->
+                </div>
+            </div>
+        </section>
+
+        <section id="story" class="container mx-auto px-6 py-20 relative">
+            <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/10 rounded-full blur-[100px] pointer-events-none">
+            </div>
+
+            <div class="text-center mb-16 relative z-10">
+                <h3 class="text-sm font-bold text-purple-400 uppercase tracking-widest mb-2">Journey</h3>
+                <h2 class="text-3xl md:text-4xl font-bold text-white">My Story</h2>
+            </div>
+
+            <div class="relative max-w-4xl mx-auto z-10">
+                <div
+                    class="absolute left-6 md:left-1/2 top-4 bottom-4 w-[2px] timeline-line transform md:-translate-x-1/2 rounded-full hidden md:block">
+                </div>
+                <div class="absolute left-6 top-4 bottom-4 w-[2px] bg-gray-800 md:hidden"></div>
+
+                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between mb-16 group">
+                    <div
+                        class="md:w-5/12 text-left md:text-right pr-0 md:pr-10 pl-16 md:pl-0 order-2 md:order-1 transition-all duration-500 md:group-hover:-translate-x-2">
+                        <h3 class="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
+                            Langkah
+                            Awal dari Garut</h3>
+                        <span class="text-sm text-purple-400 font-mono tracking-wider mb-3 block">Origins</span>
+                        <p class="text-gray-400 text-sm leading-relaxed">Berasal dari sebuah distrik dekat perbatasan
+                            Garut
+                            dan Sumedang, di sinilah pondasi kreativitas dan ketertarikan saya pada dunia teknologi
+                            mulai
+                            terbangun.</p>
+                    </div>
+                    <div
+                        class="absolute left-6 md:left-1/2 w-4 h-4 bg-background border-2 border-blue-500 rounded-full transform -translate-x-1/2 flex items-center justify-center group-hover:scale-150 group-hover:bg-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.8)] transition-all duration-300 z-10 order-1 md:order-2 mt-1 md:mt-0">
+                    </div>
+                    <div class="md:w-5/12 order-3"></div>
+                </div>
+
+                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between mb-16 group">
+                    <div class="md:w-5/12 order-1 md:order-1"></div>
+                    <div
+                        class="absolute left-6 md:left-1/2 w-4 h-4 bg-background border-2 border-purple-500 rounded-full transform -translate-x-1/2 flex items-center justify-center group-hover:scale-150 group-hover:bg-purple-500 group-hover:shadow-[0_0_20px_rgba(107,70,193,0.8)] transition-all duration-300 z-10 order-2 md:order-2 mt-1 md:mt-0">
+                    </div>
+                    <div
+                        class="md:w-5/12 text-left pl-16 md:pl-10 order-3 md:order-3 transition-all duration-500 md:group-hover:translate-x-2">
+                        <h3 class="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                            Akademik
+                            & Eksplorasi</h3>
+                        <span class="text-sm text-blue-400 font-mono tracking-wider mb-3 block">SMKN 8 Garut</span>
+                        <p class="text-gray-400 text-sm leading-relaxed">Menjalani Jurusan Multimedia. Di masa
+                            ini,
+                            saya mendalami Multimedia seperti desain grafis, animasi, dan produksi video.</p>
+                    </div>
+                </div>
+
+                <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between mb-16 group">
+                    <div class="md:w-5/12 order-1 md:order-1"></div>
+                    <div
+                        class="absolute left-6 md:left-1/2 w-4 h-4 bg-background border-2 border-purple-500 rounded-full transform -translate-x-1/2 flex items-center justify-center group-hover:scale-150 group-hover:bg-purple-500 group-hover:shadow-[0_0_20px_rgba(107,70,193,0.8)] transition-all duration-300 z-10 order-2 md:order-2 mt-1 md:mt-0">
+                    </div>
+                    <div
+                        class="md:w-5/12 text-left pl-16 md:pl-10 order-3 md:order-3 transition-all duration-500 md:group-hover:translate-x-2">
+                        <h3 class="text-xl font-bold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                            Akademik
+                            & Eksplorasi</h3>
+                        <span class="text-sm text-blue-400 font-mono tracking-wider mb-3 block">Politeknik LP3I
+                            Bandung</span>
+                        <p class="text-gray-400 text-sm leading-relaxed">Menjalani studi Manajemen Informatika. Di masa
+                            ini,
+                            saya mendalami Teknik Informatika seperti Sofware engineer, Data Scientist, dan Web
+                            Developer.</p>
+                    </div>
+                </div>
+
+                <!-- <div class="relative flex flex-col md:flex-row items-start md:items-center justify-between group">
+                    <div
+                        class="md:w-5/12 text-left md:text-right pr-0 md:pr-10 pl-16 md:pl-0 order-2 md:order-1 transition-all duration-500 md:group-hover:-translate-x-2">
+                        <h3 class="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">
+                            Ekspansi
+                            Skill Multidisiplin</h3>
+                        <span class="text-sm text-purple-400 font-mono tracking-wider mb-3 block">Present</span>
+                        <p class="text-gray-400 text-sm leading-relaxed">Saat ini saya aktif merancang UI/UX yang
+                            *clean-corporate*, mendalami ekosistem Vite-React, belajar 3D modeling, serta
+                            mengintegrasikan
+                            database seperti Supabase untuk aplikasi yang dinamis.</p>
+                    </div>
+                    <div
+                        class="absolute left-6 md:left-1/2 w-4 h-4 bg-background border-2 border-blue-500 rounded-full transform -translate-x-1/2 flex items-center justify-center group-hover:scale-150 group-hover:bg-blue-500 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.8)] transition-all duration-300 z-10 order-1 md:order-2 mt-1 md:mt-0">
+                    </div>
+                    <div class="md:w-5/12 order-3"></div>
+                </div> -->
+            </div>
+        </section>
+
+        <section id="contact" class="container mx-auto px-6 py-20">
+            <div class="bg-card border border-gray-800 rounded-3xl p-8 md:p-12 overflow-hidden relative shadow-2xl">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[80px]"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-sm font-bold text-blue-400 uppercase tracking-widest mb-2">Get in Touch</h3>
+                        <h2 class="text-4xl font-bold text-white mb-6">Let's work together on your next project.</h2>
+                        <p class="text-gray-400 mb-8">Saya selalu terbuka untuk diskusi mengenai web development, desain
+                            UI/UX, atau sekadar menyapa!</p>
+
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 text-gray-300">
+                                <div
+                                    class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-blue-400">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <span>contact@samba.my.id</span>
+                            </div>
+                            <div class="flex items-center gap-4 text-gray-300">
+                                <div
+                                    class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-purple-400">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <span>Bandung, Indonesia</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="space-y-4 relative z-10" x-data="contactFormHandler()" @submit.prevent="submitForm">
+                        <input type="text" x-model="form.name" required placeholder="Your Name"
+                            class="w-full bg-background border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                        <input type="email" x-model="form.email" required placeholder="Email Address"
+                            class="w-full bg-background border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors">
+                        <textarea x-model="form.message" required placeholder="Your Message" rows="4"
+                            class="w-full bg-background border border-gray-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"></textarea>
+
+                        <button type="submit" :disabled="isLoading"
+                            class="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                            <span x-show="!isLoading">Send Message <i class="fas fa-paper-plane ml-2"></i></span>
+                            <span x-show="isLoading"><i class="fas fa-spinner fa-spin"></i> Mengirim...</span>
+                        </button>
+
+                        <div x-show="notif.show" x-transition :class="notif.isError ? 'text-red-400' : 'text-green-400'"
+                            class="text-sm text-center mt-2 font-medium" x-text="notif.text"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <footer class="border-t border-gray-800 bg-[#0a0b14] pt-16 pb-8 mt-10">
+            <div class="container mx-auto px-6 max-w-6xl">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    <div class="md:col-span-2">
+                        <div class="text-2xl font-bold tracking-wider mb-4">My<span
+                                class="text-blue-300">Fortofolio</span>
+                        </div>
+                        <p class="text-gray-400 text-sm leading-relaxed max-w-sm mb-6">
+                            Menggabungkan teknologi dan kreativitas untuk membangun solusi digital inovatif. Mari
+                            wujudkan
+                            ide Anda menjadi nyata.
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-card border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-blue-500 transition-all"><i
+                                    class="fab fa-github"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-card border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-blue-500 transition-all"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-card border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-blue-500 transition-all"><i
+                                    class="fab fa-linkedin-in"></i></a>
+                            <a href="#"
+                                class="w-10 h-10 rounded-full bg-card border border-gray-800 flex items-center justify-center text-gray-400 hover:text-white hover:border-blue-500 transition-all"><i
+                                    class="fab fa-whatsapp"></i></a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-2 gap-4 w-full justify-between">
+                        <div>
+                            <h4 class="text-white font-bold mb-6">Quick Links</h4>
+                            <ul class="space-y-3 text-sm text-gray-400">
+                                <li><a href="#" class="hover:text-blue-400 transition-colors">Home</a></li>
+                                <li><a href="#about" class="hover:text-blue-400 transition-colors">About</a></li>
+                                <li><a href="#skills" class="hover:text-blue-400 transition-colors">Skills</a></li>
+                                <li><a href="#project" class="hover:text-blue-400 transition-colors">Projects</a></li>
+                            </ul>
+                        </div>
+                        <div class="-ml-4">
+                            <h4 class="text-white font-bold mb-6">Contact Info</h4>
+                            <ul class="space-y-3 text-sm text-gray-400">
+                                <li class="flex items-center gap-3"><i class="fas fa-map-marker-alt text-gray-600"></i>
+                                    Garut, Jawa Barat,
+                                    Indonesia</li>
+                                <li class="flex items-center gap-3"><i class="fas fa-envelope text-gray-600"></i>
+                                    contact@samba.my.id</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+                <div
+                    class="border-t border-gray-800 pt-8 flex flex-col justify-between items-center gap-4 text-xs text-gray-500">
+                    <p>&copy; 2026 Samba Hadidaya. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
     </div>
+
+
 
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script src="script.js"></script>
