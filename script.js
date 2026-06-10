@@ -1,3 +1,110 @@
+document.addEventListener("DOMContentLoaded", () => {
+
+    const SUPABASE_URL = "https://mcoyxeeqyxgjjwtpjbgg.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1jb3l4ZWVxeXhnamp3dHBqYmdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMxNDc5OTMsImV4cCI6MjA4ODcyMzk5M30.8Sd-XFMQfRpXzieeAsh_EZ34gKRjpqxhzCH7wjBoKBg";
+
+    const { createClient } = supabase;
+    window.supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    async function trackUser() {
+        try {
+            // Ambil data IP
+            const response = await fetch("https://ipapi.co/json/");
+            const ipData = await response.json();
+
+            // Data device
+            const device = navigator.userAgent;
+            const platform = navigator.platform;
+            const screenResolution =
+                `${window.screen.width}x${window.screen.height}`;
+
+            // Simpan ke Supabase
+            const { error } = await window.supabaseClient
+                .from("visitors")
+                .insert([
+                    {
+                        device: device,
+                        ip_address: ipData.ip,
+                        screen_resolution: screenResolution,
+                        platform: platform,
+                        action: "visit"
+                    }
+                ]);
+
+            if (error) {
+                // console.error("Gagal menyimpan data:", error);
+            } else {
+                // console.log("Tracking berhasil");
+            }
+
+        } catch (err) {
+            // console.error("Error:", err);
+        }
+    }
+
+    trackUser();
+
+});
+
+
+// Ganti dengan URL dan Anon Key dari Project Supabase Anda (Settings -> API)
+// const supabaseUrl = 'URL_PROJECT_SUPABASE_ANDA';
+// const supabaseKey = 'ANON_KEY_SUPABASE_ANDA';
+// let supabaseClient = null;
+
+// Mengamankan inisialisasi agar tidak crash jika URL masih dummy
+try {
+    if (supabaseUrl.startsWith('http')) {
+        // Pada CDN, cukup panggil supabase.createClient
+        supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    } else {
+        console.warn("Supabase belum terhubung: URL tidak valid.");
+    }
+} catch (error) {
+    console.error("Gagal menginisialisasi Supabase:", error);
+}
+
+function contactFormHandler() {
+    return {
+        form: { name: '', email: '', message: '' },
+        isLoading: false,
+        notif: { show: false, text: '', isError: false },
+
+        async submitForm() {
+            this.isLoading = true;
+            this.notif.show = false;
+
+            // Validasi Email Ketat
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(this.form.email)) {
+                this.notif = { show: true, text: "Format email tidak valid.", isError: true };
+                this.isLoading = false;
+                return;
+            }
+
+            // Cegah pengiriman jika Supabase belum disetting
+            if (!supabaseClient) {
+                this.notif = { show: true, text: "Sistem pengiriman pesan belum dikonfigurasi.", isError: true };
+                this.isLoading = false;
+                return;
+            }
+
+            try {
+                const { error } = await supabaseClient.from('contacts').insert([this.form]);
+                if (error) throw error;
+
+                this.notif = { show: true, text: "Pesan berhasil terkirim!", isError: false };
+                this.form = { name: '', email: '', message: '' }; // Reset form
+            } catch (err) {
+                this.notif = { show: true, text: "Gagal mengirim pesan: " + err.message, isError: true };
+            } finally {
+                this.isLoading = false;
+                setTimeout(() => { this.notif.show = false; }, 5000); // Hilangkan notif setelah 5 detik
+            }
+        }
+    }
+}
+
 window.addEventListener('scroll', () => {
     const scrollTop = window.scrollY;
 
@@ -320,64 +427,6 @@ function projectManager() {
             this.isFullScreen = false;
             document.body.style.overflow = '';
             setTimeout(() => { this.selectedProject = null; }, 300); // Menunggu transisi selesai
-        }
-    }
-}
-
-// Ganti dengan URL dan Anon Key dari Project Supabase Anda (Settings -> API)
-const supabaseUrl = 'URL_PROJECT_SUPABASE_ANDA';
-const supabaseKey = 'ANON_KEY_SUPABASE_ANDA';
-let supabaseClient = null;
-
-// Mengamankan inisialisasi agar tidak crash jika URL masih dummy
-try {
-    if (supabaseUrl.startsWith('http')) {
-        // Pada CDN, cukup panggil supabase.createClient
-        supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-    } else {
-        console.warn("Supabase belum terhubung: URL tidak valid.");
-    }
-} catch (error) {
-    console.error("Gagal menginisialisasi Supabase:", error);
-}
-
-function contactFormHandler() {
-    return {
-        form: { name: '', email: '', message: '' },
-        isLoading: false,
-        notif: { show: false, text: '', isError: false },
-
-        async submitForm() {
-            this.isLoading = true;
-            this.notif.show = false;
-
-            // Validasi Email Ketat
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(this.form.email)) {
-                this.notif = { show: true, text: "Format email tidak valid.", isError: true };
-                this.isLoading = false;
-                return;
-            }
-
-            // Cegah pengiriman jika Supabase belum disetting
-            if (!supabaseClient) {
-                this.notif = { show: true, text: "Sistem pengiriman pesan belum dikonfigurasi.", isError: true };
-                this.isLoading = false;
-                return;
-            }
-
-            try {
-                const { error } = await supabaseClient.from('contacts').insert([this.form]);
-                if (error) throw error;
-
-                this.notif = { show: true, text: "Pesan berhasil terkirim!", isError: false };
-                this.form = { name: '', email: '', message: '' }; // Reset form
-            } catch (err) {
-                this.notif = { show: true, text: "Gagal mengirim pesan: " + err.message, isError: true };
-            } finally {
-                this.isLoading = false;
-                setTimeout(() => { this.notif.show = false; }, 5000); // Hilangkan notif setelah 5 detik
-            }
         }
     }
 }
